@@ -1,56 +1,50 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define fast                          \
-    ios_base::sync_with_stdio(false); \
-    cin.tie(NULL);                    \
-    cout.tie(NULL);
-bool solve(int n, vector<vector<int>> arr)
+#define fast           ios_base::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL);
+int Limit = 10000;
+vector<int> SeivesPrime(Limit + 1);
+bool solve(int n)
 {
-    vector<vector<int>> visited(n, vector<int>(3, 0));
-    int dx[3] = {-1, 0, 1};
-    int dy[3] = {0, 1, 0};
-    queue<pair<int, int>> qu;
-    qu.push({n - 1, 1});
-    while (!qu.empty())
+    int tar, wind, temp;
+    cin >> tar >> wind;
+    temp = tar + wind * -1;
+    if (temp >= 0 && temp < n * n && SeivesPrime[temp])
     {
-        pair<int, int> temp = qu.front();
-        qu.pop();
-        for (int i = 0; i < 3; i++)
-        {
-            int x = temp.first + dx[i];
-            int y = temp.second + dy[i];
-            if (x >= 0 && x < n && y >= 0 && y < 3 && visited[x][y] == 0 && arr[x][y] == 0)
-            {
-                if (x == 0 && arr[x][y] == 0)
-                {
-                    return true;
-                }
-                qu.push({x, y});
-                visited[x][y] = 1;
-            }
-        }
+        if (temp / n == tar / n)
+            return true;
     }
     return false;
 }
+
 int main()
 {
     fast;
-    int t;
-    cin >> t;
-    while (t--)
+    for (int i = 0; i <= Limit; i++)
     {
-        int n;
-        cin >> n;
-        vector<vector<int>> arr(n, vector<int>(3));
-        for (int i = 0; i < n; i++)
-        {
-            for (int j = 0; j < 3; j++)
-            {
-                cin >> arr[i][j];
-            }
-        }
-        bool ans = solve(n, arr);
-        cout << ans << "\n";
+        SeivesPrime[i] = 1;
     }
+    SeivesPrime[0] = 0;
+    SeivesPrime[1] = 0;
+    for (long i = 2; i * i < Limit; i++)
+    {
+        if (SeivesPrime[i])
+            for (long j = i * i; j < Limit; j = j + i)
+            {
+                SeivesPrime[j] = 0;
+            }
+    }
+
+    int n;
+    cin >> n;
+    int q;
+    cin >> q;
+    while (q--)
+    {
+        if (solve(n))
+            cout << "True\n";
+        else
+            cout << "False\n";
+    }
+
     return 0;
 }
